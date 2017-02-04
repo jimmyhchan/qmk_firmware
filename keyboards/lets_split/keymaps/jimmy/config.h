@@ -14,10 +14,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#define USE_I2C
 
-#define I2C_MASTER_LEFT
-// #define I2C_MASTER_RIGHT
+// if you soldered the i2c jumpers and the resistors, you can use either
+// if you have not, you must use serial
+//#define USE_I2C
+#define USE_SERIAL
+
+//  use EE_HANDS and flash to eeprom if you want to regularly swap the usb side
+//  otherwise choose what side you want the usb cable to plug into
+//#define I2C_MASTER_LEFT
+//#define I2C_MASTER_RIGHT
+//#define EE_HANDS
 
 #ifdef SUBPROJECT_rev1
     #include "../../rev1/config.h"

@@ -11,5 +11,5 @@ PORT=/dev/tty.usbmodem1411
 #  I needed this python script the first time since it refused to enter bootloader
 # python reset.py $PORT
 # sleep 3
-avrdude -v -patmega32u4 -cavr109 -P$PORT -Uflash:w:lets_split_rev2_jimmyi2c.hex
+avrdude -v -patmega32u4 -cavr109 -P$PORT -Uflash:w:../../lets_split_rev2_jimmy.hex
 

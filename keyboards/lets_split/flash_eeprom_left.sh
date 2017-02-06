@@ -10,5 +10,5 @@
 # PORT=/dev/tty.usbmodem1421
 PORT=/dev/tty.usbmodem1411
 
-avrdude -v -patmega32u4 -cavr109 -P$PORT -Ueeprom:w:eeprom-lefthand.eep
+sleep 3; avrdude -v -patmega32u4 -cavr109 -P$PORT -Ueeprom:w:eeprom-lefthand.eep
 

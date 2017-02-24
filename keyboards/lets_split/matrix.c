@@ -32,11 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pro_micro.h"
 #include "config.h"
 
-#ifdef USE_I2C
-#  include "i2c.h"
-#else // USE_SERIAL
-#  include "serial.h"
-#endif
+#include "i2c.h"
 
 #ifndef DEBOUNCE
 #  define DEBOUNCE	5
@@ -45,8 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ERROR_DISCONNECT_COUNT 5
 
 static uint8_t debouncing = DEBOUNCE;
-static const int ROWS_PER_HAND = MATRIX_ROWS/2;
+static const int ROWS_PER_HAND = MATRIX_ROWS/3;
 static uint8_t error_count = 0;
+static uint8_t ack_error_count = 0;
 
 static const uint8_t row_pins[MATRIX_ROWS] = MATRIX_ROW_PINS;
 static const uint8_t col_pins[MATRIX_COLS] = MATRIX_COL_PINS;
@@ -117,17 +114,18 @@ void matrix_init(void)
         matrix_debouncing[i] = 0;
     }
 
+
     matrix_init_quantum();
 }
 
 uint8_t _matrix_scan(void)
 {
-    // Right hand is stored after the left in the matirx so, we need to offset it
-    int offset = isLeftHand ? 0 : (ROWS_PER_HAND);
+    // keymaps for the hands are stored one after the other so we need to offset it
+    int offset = handOffset * (ROWS_PER_HAND);
 
     for (uint8_t i = 0; i < ROWS_PER_HAND; i++) {
         select_row(i);
-        _delay_us(30);  // without this wait read unstable value.
+        _delay_us(90);  // without this wait read unstable value.
         matrix_row_t cols = read_cols();
         if (matrix_debouncing[i+offset] != cols) {
             matrix_debouncing[i+offset] = cols;
@@ -149,54 +147,56 @@ uint8_t _matrix_scan(void)
     return 1;
 }
 
-#ifdef USE_I2C
-
 // Get rows from other half over i2c
 int i2c_transaction(void) {
-    int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
+    // read over i2c from all the hands
+    for (int j = 0; j < NUM_HANDS; ++j) {
+        // dont read from self
+        if ((uint8_t) j != handOffset) {
+            int slaveOffset = j * (ROWS_PER_HAND);
 
-    int err = i2c_master_start(SLAVE_I2C_ADDRESS + I2C_WRITE);
-    if (err) goto i2c_error;
+            // TODO: set a different slave address for slave 2, 3 ...etc
+            int err = i2c_master_start(((SLAVE_I2C_ADDRESS + j)<<1)  + I2C_WRITE);
+            // soft error
+            if (err) {
+              ack_error_count++;
+              continue;
+            }
 
-    // start of matrix stored at 0x00
-    err = i2c_master_write(0x00);
-    if (err) goto i2c_error;
+            // start of matrix stored at 0x00
+            err = i2c_master_write(0x00);
+            if (err) goto i2c_error;
 
-    // Start read
-    err = i2c_master_start(SLAVE_I2C_ADDRESS + I2C_READ);
-    if (err) goto i2c_error;
+            // Start read
+            err = i2c_master_start(((SLAVE_I2C_ADDRESS + j )<<1) + I2C_READ);
+            if (err) goto i2c_error;
 
-    if (!err) {
-        int i;
-        for (i = 0; i < ROWS_PER_HAND-1; ++i) {
-            matrix[slaveOffset+i] = i2c_master_read(I2C_ACK);
+            if (!err) {
+                int i;
+                for (i = 0; i < ROWS_PER_HAND-1; ++i) {
+                    matrix[slaveOffset+i] = i2c_master_read(I2C_ACK);
+                }
+                matrix[slaveOffset+i] = i2c_master_read(I2C_NACK);
+                i2c_master_stop();
+            } else {
+      i2c_error: // the cable is disconnceted, or something else went wrong
+                i2c_reset_state();
+                return err;
+            }
+
         }
-        matrix[slaveOffset+i] = i2c_master_read(I2C_NACK);
-        i2c_master_stop();
-    } else {
-i2c_error: // the cable is disconnceted, or something else went wrong
-        i2c_reset_state();
-        return err;
     }
 
+    // TODO remove this hard coded debugging also add logic to reset states whenever ack counts change?
+    // we have 2 halves and the 3rd is not responding should return 1 ack errors
+    if (ack_error_count == 2) {
+      ack_error_count = 0;
+      i2c_reset_state();
+      return 1;
+    }
+    ack_error_count = 0;
     return 0;
 }
-
-#else // USE_SERIAL
-
-int serial_transaction(void) {
-    int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
-
-    if (serial_update_buffers()) {
-        return 1;
-    }
-
-    for (int i = 0; i < ROWS_PER_HAND; ++i) {
-        matrix[slaveOffset+i] = serial_slave_buffer[i];
-    }
-    return 0;
-}
-#endif
 
 uint8_t matrix_scan(void)
 {
@@ -204,21 +204,21 @@ uint8_t matrix_scan(void)
 
 
 
-#ifdef USE_I2C
     if( i2c_transaction() ) {
-#else // USE_SERIAL
-    if( serial_transaction() ) {
-#endif
         // turn on the indicator led when halves are disconnected
         TXLED1;
 
         error_count++;
 
         if (error_count > ERROR_DISCONNECT_COUNT) {
-            // reset other half if disconnected
-            int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
-            for (int i = 0; i < ROWS_PER_HAND; ++i) {
-                matrix[slaveOffset+i] = 0;
+            // reset all other slaves if disconnected
+            for (int j = 0; j < NUM_HANDS; ++j) {
+                int slaveOffset = j * (ROWS_PER_HAND);
+                if ((uint8_t) j != handOffset) {
+                  for (int i = 0; i < ROWS_PER_HAND; ++i) {
+                      matrix[slaveOffset+i] = 0;
+                  }
+                }
             }
         }
     } else {
@@ -235,18 +235,12 @@ uint8_t matrix_scan(void)
 void matrix_slave_scan(void) {
     _matrix_scan();
 
-    int offset = (isLeftHand) ? 0 : (MATRIX_ROWS / 2);
+    int offset = handOffset * (ROWS_PER_HAND);
 
-#ifdef USE_I2C
     for (int i = 0; i < ROWS_PER_HAND; ++i) {
         /* i2c_slave_buffer[i] = matrix[offset+i]; */
         i2c_slave_buffer[i] = matrix[offset+i];
     }
-#else // USE_SERIAL
-    for (int i = 0; i < ROWS_PER_HAND; ++i) {
-        serial_slave_buffer[i] = matrix[offset+i];
-    }
-#endif
 }
 
 bool matrix_is_modified(void)

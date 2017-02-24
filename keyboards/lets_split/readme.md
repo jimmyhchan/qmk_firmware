@@ -18,8 +18,7 @@ $ make rev2
 You will see a lot of output and if everything worked correctly you will see the built hex files:
 
 ```
-lets_split_rev2_serial.hex
-lets_split_rev2_i2c.hex
+lets_split_rev2_default.hex
 ```
 
 If you would like to use one of the alternative keymaps, or create your own, copy one of the existing [keymaps](keymaps/) and run make like so:
@@ -49,11 +48,8 @@ Some features supported by the firmware:
 
 * Either half can connect to the computer via USB, or both halves can be used
   independently.
-* You only need 3 wires to connect the two halves. Two for VCC and GND and one
-  for serial communication.
-* Optional support for I2C connection between the two halves if for some
-  reason you require a faster connection between the two halves. Note this
-  requires an extra wire between halves and pull-up resistors on the data lines.
+* The "third half" can be connected optionally.
+* I2C connection between the three halves requires an 4 wires between all halves and pull-up resistors on the data lines.
 
 Required Hardware
 -----------------
@@ -61,11 +57,12 @@ Required Hardware
 Apart from diodes and key switches for the keyboard matrix in each half, you
 will need:
 
-* 2 Arduino Pro Micro's. You can find theses on aliexpress for ≈3.50USD each.
-* 2 TRS sockets
-* 1 TRS cable.
+* 3 Arduino Pro Micro's. You can find theses on aliexpress for ≈3.50USD each.
+* 4 TRRS sockets
+* 2 TRRS cable
+(or 3 TRRS sockets, 2 cables and TRRS to dual TRRS splitter
 
-Alternatively, you can use any sort of cable and socket that has at least 3
+Alternatively, you can use any sort of cable and socket that has at least 4
 wires. If you want to use I2C to communicate between halves, you will need a
 cable with at least 4 wires and 2x 4.7kΩ pull-up resistors
 
@@ -77,15 +74,11 @@ A speaker can be hooked-up to either side to the `5` (`C6`) pin and `GND`, and t
 Wiring
 ------
 
-The 3 wires of the TRS cable need to connect GND, VCC, and digital pin 3 (i.e.
-PD0 on the ATmega32u4) between the two Pro Micros.
+The 4 wires of the TRRS cable need to connect GND, VCC, and digital pins 2 and 3 (i.e.
+PD0, PD1 on the ATmega32u4) between the three Pro Micros.
 
 Then wire your key matrix to any of the remaining 17 IO pins of the pro micro
 and modify the `matrix.c` accordingly.
-
-The wiring for serial:
-
-![serial wiring](imgs/split-keyboard-serial-schematic.png)
 
 The wiring for i2c:
 
@@ -109,7 +102,7 @@ not be very difficult to adapt it to support more if required.
 Flashing
 -------
 From the keymap directory run `make SUBPROJECT-KEYMAP-avrdude` for automatic serial port resolution and flashing.
-Example: `make rev2-serial-avrdude`
+Example: `make rev2-default-avrdude`
 
 
 Choosing which board to plug the USB cable into (choosing Master)

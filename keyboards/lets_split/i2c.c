@@ -6,8 +6,6 @@
 #include <stdbool.h>
 #include "i2c.h"
 
-#ifdef USE_I2C
-
 // Limits the amount of we wait for any one i2c transaction.
 // Since were running SCL line 100kHz (=> 10μs/bit), and each transactions is
 // 9 bits, a single transaction will take around 90μs to complete.
@@ -43,8 +41,9 @@ void i2c_master_init(void) {
   TWBR = ((F_CPU/SCL_CLOCK)-16)/2;
 }
 
-// Start a transaction with the given i2c slave address. The direction of the
-// transfer is set with I2C_READ and I2C_WRITE.
+// Start a transaction with the given i2c slave 8-bit address. The direction of the
+// transfer is set with ((7bitaddress<<1 )+I2C_READ)  or with an
+// I2C_WRITE.
 // returns: 0 => success
 //          1 => error
 uint8_t i2c_master_start(uint8_t address) {
@@ -104,8 +103,9 @@ void i2c_reset_state(void) {
   TWCR = 0;
 }
 
+// address param is the 8 bit address with r/w lsb set
 void i2c_slave_init(uint8_t address) {
-  TWAR = address << 0; // slave i2c address
+  TWAR = address; // slave i2c address
   // TWEN  - twi enable
   // TWEA  - enable address acknowledgement
   // TWINT - twi interrupt flag
@@ -159,4 +159,3 @@ ISR(TWI_vect) {
   // Reset everything, so we are ready for the next TWI interrupt
   TWCR |= (1<<TWIE) | (1<<TWINT) | (ack<<TWEA) | (1<<TWEN);
 }
-#endif

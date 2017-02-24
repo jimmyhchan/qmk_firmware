@@ -3,14 +3,12 @@
 
 #include <stdbool.h>
 
-#ifdef EE_HANDS
-	#define EECONFIG_BOOTMAGIC_END      (uint8_t *)10
-	#define EECONFIG_HANDEDNESS         EECONFIG_BOOTMAGIC_END
-#endif
+#define EECONFIG_BOOTMAGIC_END      (uint8_t *)10
+#define EECONFIG_HANDEDNESS         EECONFIG_BOOTMAGIC_END
+#define SLAVE_I2C_ADDRESS           0x19 // 7-bit address
+#define NUM_HANDS                   3 // count of all slaves and the master
 
-#define SLAVE_I2C_ADDRESS           0x32
-
-extern volatile bool isLeftHand;
+extern volatile uint8_t handOffset;
 
 // slave version of matix scan, defined in matrix.c
 void matrix_slave_scan(void);

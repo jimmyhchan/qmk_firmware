@@ -5,7 +5,13 @@
 * Online keyboard layout editor (fn2 layer): TBD
 
 # Programming Instructions:
+$ make kc60:jimmy:flashbin
 Enter into programming mode and run the following command.
+(keyboard led should start blinking)
 ```
-$ sudo KEYMAP=jimmy make dfu
+$ cp kc60_jimmy.bin /Volumes/LUFA\ BOOT/FLASH.BIN
+$ sudo umount /Volumes/LUFA\ BOOT
+
 ```
+Hit escape key on the keyboard
+(keyboard led should stop blinking)

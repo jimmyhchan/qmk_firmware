@@ -6,7 +6,7 @@
 #define _QWERTY 0
 #define _FNTABS 1
 #define _FNRIGHTSHIFT 2
-#define _FNLEFTOPTION 3
+#define _FN3          3
 
 // Fillers to make layering more clear
 #define ______ KC_TRNS
@@ -23,7 +23,7 @@
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Qwerty
  * ,-----------------------------------------------------------------------------------------.
- * | Esc |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  |  \  |  `  |
+ * | `   |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  |  \  | bksp|
  * |-----------------------------------------------------------------------------------------+
  * | Tab/FN |  Q  |  W  |  E  |  R  |  T  |  Y  |  U  |  I  |  O  |  P  |  [  |  ]  |  Bksp  |
  * |-----------------------------------------------------------------------------------------+
@@ -31,15 +31,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-----------------------------------------------------------------------------------------+
  * | Shift     |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |     Up    | FN2 |
  * |-----------------------------------------------------------------------------------------+
- * | Ctrl  | FN3   |  OSX   |               Space             | AltGr | Left  | Down  | Right |
+ * |  FN3  | ALT   |  OSX   |               Space             | AltGr | Left  | Down  | Right |
  * `-----------------------------------------------------------------------------------------'
  */
   [0] = KEYMAP( /* Basic QWERTY */
-      KC_ESC,   KC_1,     KC_2,     KC_3,    KC_4,     KC_5,     KC_6,     KC_7,    KC_8,  KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSLS,  \
+      KC_GRV,   KC_1,     KC_2,     KC_3,    KC_4,     KC_5,     KC_6,     KC_7,    KC_8,  KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSLS,  \
       LT(_FNTABS, KC_TAB),   KC_Q,     KC_W,     KC_E,    KC_R,     KC_T,     KC_Y,     KC_U,    KC_I,  KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSPC,  \
       CTL_T(KC_ESC),  KC_A,     KC_S,     KC_D,    KC_F,     KC_G,     KC_H,     KC_J,    KC_K,  KC_L,     KC_SCLN,  KC_QUOT,  KC_NO,    KC_ENT,   \
       KC_LSFT,  XXXXXXX,    KC_Z,     KC_X,    KC_C,     KC_V,     KC_B,     KC_N,    KC_M,  KC_COMM,  KC_DOT,   KC_SLSH,  MO(_FNRIGHTSHIFT),  KC_UP,  \
-      KC_LCTL,  MO(_FNLEFTOPTION),  KC_LGUI,                KC_SPC,  KC_GRV,            KC_RALT,  KC_LEFT, KC_DOWN, KC_RIGHT \
+      MO(_FN3), KC_LALT,   KC_LGUI,                KC_SPC,  KC_BSPC,            KC_RALT,  KC_LEFT, KC_DOWN, KC_RIGHT \
       ),       // right of left shift is not a thing               //^^ grave is here                                     // up and fn2 is reversed here
 
 /* Layer 1
@@ -48,7 +48,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-----------------------------------------------------------------------------------------+
  * |        |     |     |     |     |     |     |     |     |     |     |     |     |        |
  * |-----------------------------------------------------------------------------------------+
- * |         |     |     |     |     |     |     | Psc |     |     |     |     |             |
+ * |         |     |     |     |     |     |     | left|down |up   |right|     |             |
  * |-----------------------------------------------------------------------------------------+
  * |           | Led | Led+| Led-|     | Mute| Vol+| Vol-|     |     |     |    Play   |     |
  * |-----------------------------------------------------------------------------------------+
@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_FNTABS] = KEYMAP( /* Layer 1 */
       ______,   KC_F1,  KC_F2,  KC_F3,  KC_F4,  KC_F5,  KC_F6,  KC_F7,  KC_F8,  KC_F9,  KC_F10, KC_F11, KC_F12, KC_INS,  \
       ______,   ______, ______, ______, ______, ______, ______, ______, ______, ______, ______, ______, ______, ______,  \
-      ______,   ______, ______, ______, ______, ______, ______, KC_PSCR,______, ______, ______, ______, ______, ______,   \
+      ______,   ______, ______, ______, ______, ______, KC_LEFT, KC_DOWN,KC_UP,KC_RIGHT, ______, ______, ______, ______,   \
       ______,   ______,  BL_TOGG,BL_INC,BL_DEC,______,KC_MUTE,KC_VOLU,KC_VOLD,______, ______, ______, ______,KC_MPLY,  \
       ______,   ______, ______,                 ______,         KC_DEL,         ______, KC_MPRV,    KC_MSTP,    KC_MNXT \
       ),
@@ -97,7 +97,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |       |       |       |                                 |       |       |       |       |
  * `-----------------------------------------------------------------------------------------'
  */
-  [_FNLEFTOPTION] = KEYMAP( /* Layer 3 */
+  [_FN3] = KEYMAP( /* Layer 3 */
       ______,   ______, ______, ______, ______, ______, ______,  ______,   ______, ______, ______, ______, ______, ______,  \
       ______,   ______, ______, ______, ______, ______, KC_CIRC, KC_EXLM, KC_PERC, ______, ______, ______, ______, ______,  \
       ______,   ______, ______, ______, ______, ______, KC_MINS, KC_EQL,  KC_PLUS, ______, ______, KC_GRV, ______, ______,   \

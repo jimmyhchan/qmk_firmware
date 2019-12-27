@@ -1,7 +1,8 @@
-#ifndef USERSPACE
-#define USERSPACE
+#pragma once
 
 #include "quantum.h"
+
+extern keymap_config_t keymap_config;
 
 // Define layer names
 #define _COLEMAK 0
@@ -10,7 +11,8 @@
 #define _RAISE 4
 #define _ADJUST 5
 
-enum userspace_custom_keycodes {
+// NOT SURE WHY the other keymaps don't use the layer anymore
+enum custom_keycodes {
   COLEMAK = SAFE_RANGE,
   QWERTY,
   LOWER,
@@ -19,8 +21,10 @@ enum userspace_custom_keycodes {
 };
 
 #define KC_ KC_TRNS
-#define _______ KC_TRNS
+#define KC_RST RESET
+#define KC_LOWR MO(_LOWER)
+#define KC_RASE MO(_RAISE)
 //define modifiers
-#define KC_X0 MT(MOD_LCTL, KC_ESC)
+#define KC_ESCC MT(MOD_LCTL, KC_ESC)
 #define KC_X1 LOWER
 #define KC_X2 RAISE

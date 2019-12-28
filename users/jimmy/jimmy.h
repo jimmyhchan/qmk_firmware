@@ -9,7 +9,8 @@ extern keymap_config_t keymap_config;
 #define _QWERTY 1
 #define _LOWER 3
 #define _RAISE 4
-#define _ADJUST 5
+#define _NAV 5
+#define _ADJUST 6
 
 // NOT SURE WHY the other keymaps don't use the layer anymore
 enum custom_keycodes {
@@ -17,14 +18,18 @@ enum custom_keycodes {
   QWERTY,
   LOWER,
   RAISE,
+  NAV,
   ADJUST
 };
 
 #define KC_ KC_TRNS
 #define KC_RST RESET
-#define KC_LOWR MO(_LOWER)
-#define KC_RASE MO(_RAISE)
+#define KC_ALTL MT(MOD_LALT, KC_LEFT)
 //define modifiers
 #define KC_ESCC MT(MOD_LCTL, KC_ESC)
-#define KC_X1 LOWER
-#define KC_X2 RAISE
+#define KC_X1 MO(_LOWER)
+#define KC_X2 MO(_RAISE)
+#define KC_X3 MO(_NAV)
+#define KC_QOX3 LT(_NAV, KC_QUOT)
+#define KC_TGX3 TG(_NAV)
+#define KC_OSFT OSM(MOD_LSFT)

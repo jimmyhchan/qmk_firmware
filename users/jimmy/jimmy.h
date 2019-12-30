@@ -21,11 +21,10 @@ enum custom_keycodes {
   NAV,
   ADJUST
 };
-
 #define KC_ KC_TRNS
 #define KC_RST RESET
-#define KC_ALTL MT(MOD_LALT, KC_LEFT)
 //define modifiers
+#define KC_ALTL MT(MOD_LALT, KC_LEFT)
 #define KC_ESCC MT(MOD_LCTL, KC_ESC)
 #define KC_X1 MO(_LOWER)
 #define KC_X2 MO(_RAISE)
@@ -33,3 +32,7 @@ enum custom_keycodes {
 #define KC_QOX3 LT(_NAV, KC_QUOT)
 #define KC_TGX3 TG(_NAV)
 #define KC_OSFT OSM(MOD_LSFT)
+
+#define KC_GUIA A(KC_LGUI)
+#define KC_GUIS S(KC_LGUI)
+#define KC_SFTA S(KC_LALT)

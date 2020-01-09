@@ -31,9 +31,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,----+----+----+----+----+----.    ,----+----+----+----+----+----.
      GRV , 1  , 2  , 3  , 4  , 5  ,      6  , 7  , 8  , 9  , 0  ,BSPC,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
-       X3,  0 ,    ,    ,    ,LCBR,     BSPC, EQL,MINS,LCBR,RCBR,GRV ,
+       X3,  0 ,    ,    ,LPRN,LCBR,     BSPC, EQL,MINS,LCBR,RCBR,GRV ,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
-     SFTA,    ,    ,    ,    ,LBRC,      ENT,UNDS,BSLS,LBRC,RBRC,    ,
+     LSFT,    ,    ,    ,    ,LBRC,      ENT,UNDS,BSLS,LBRC,RBRC,    ,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
          ,    ,    ,GUIS,    ,    ,         ,    ,GUIA,    ,    ,
   //`----+----+----+----+----+----'    `----+----+----+----+----+----'
@@ -41,11 +41,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_RAISE] = LAYOUT_kc(
   //,----+----+----+----+----+----.    ,----+----+----+----+----+----.
-     TILD,EXLM, AT ,HASH,DLR ,PERC,     CIRC,AMPR,ASTR,LPRN,RPRN,BSPC,
+     GRV , 1  , 2  , 3  , 4  , 5  ,      6  , 7  , 8  , 9  , 0  ,BSPC,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
-       X3,  0 ,    ,    ,    ,LCBR,     BSPC, EQL,MINS,LCBR,RCBR,GRV ,
+       X3,  0 ,    ,    ,LPRN,LCBR,     BSPC, EQL,MINS,LCBR,RCBR,GRV ,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
-     SFTA,    ,    ,    ,    ,LBRC,      ENT,UNDS,BSLS,LBRC,RBRC,    ,
+     LSFT,    ,    ,    ,    ,LBRC,      ENT,UNDS,BSLS,LBRC,RBRC,    ,
   //|----+----+----+----+----+----|    |----+----+----+----+----+----|
          ,    ,    ,GUIS,    ,    ,         ,    ,GUIA,    ,    ,
   //`----+----+----+----+----+----'    `----+----+----+----+----+----'
@@ -96,11 +96,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case COLEMAK:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_COLEMAK);
-      }
-      return false;
-    case DVORAK:
-      if (record->event.pressed) {
-        set_single_persistent_default_layer(_DVORAK);
       }
       return false;
   }
